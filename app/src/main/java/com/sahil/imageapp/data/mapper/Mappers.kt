@@ -19,6 +19,8 @@ fun UnsplashImageDto.toDomainModel(): UnSplashImage {
     )
 }
 
-fun List<UnsplashImageDto>.toDomainList(): List<UnSplashImage> {
-    return this.map { it.toDomainModel() }
+fun List<UnsplashImageDto>.toDomainModelList(): List<UnSplashImage> {
+    return this.map {
+        it.toDomainModel()
+    }
 }

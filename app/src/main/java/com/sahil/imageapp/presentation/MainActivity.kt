@@ -1,4 +1,4 @@
-package com.sahil.imageapp
+package com.sahil.imageapp.presentation
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -17,8 +17,10 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
 import com.sahil.imageapp.presentation.navigation.NavGraphSetup
 import com.sahil.imageapp.presentation.theme.ImageAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
