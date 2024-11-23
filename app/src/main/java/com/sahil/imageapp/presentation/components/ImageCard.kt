@@ -18,14 +18,14 @@ import com.sahil.imageapp.domain.model.UnSplashImage
 import androidx.compose.runtime.*
 
 @Composable
-fun ImageCard(modifier: Modifier = Modifier, image: UnSplashImage) {
+fun ImageCard(modifier: Modifier = Modifier, image: UnSplashImage?) {
 
     val imageRequest = ImageRequest.Builder(LocalContext.current)
-        .data(image.imageUrlSmall)
+        .data(image?.imageUrlSmall)
         .crossfade(true)
         .build()
     val aspectRation: Float by remember {
-        derivedStateOf { ( image.width.toFloat() ?: 1f ) / (image.height.toFloat() ?: 1f) }
+        derivedStateOf { ( image?.width?.toFloat() ?: 1f ) / (image?.height?.toFloat() ?: 1f) }
     }
     Card(
         shape = RoundedCornerShape(10.dp),

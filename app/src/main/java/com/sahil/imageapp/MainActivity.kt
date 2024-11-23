@@ -13,9 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.sahil.imageapp.presentation.home_screen.HomeScreen
-import com.sahil.imageapp.presentation.home_screen.HomeViewModel
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.compose.rememberNavController
+import com.sahil.imageapp.presentation.navigation.NavGraphSetup
 import com.sahil.imageapp.presentation.theme.ImageAppTheme
 
 
@@ -25,20 +25,22 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        installSplashScreen()
         setContent {
             ImageAppTheme {
+                val navController = rememberNavController()
                 val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-                val viewModel = viewModel<HomeViewModel>()
-                Scaffold(modifier = Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection)) {
-                    HomeScreen(
-                        scrollBehavior = scrollBehavior,
-                        images = viewModel.images,
-                        onImageClick = {},
-                        onSearchClick = {},
-                        onFabClick = {}
+                Scaffold(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .nestedScroll(scrollBehavior.nestedScrollConnection)
+                ) {
+
+                    NavGraphSetup(
+                        navController = navController,
+                        scrollBehavior = scrollBehavior
                     )
                 }
-
             }
         }
     }
