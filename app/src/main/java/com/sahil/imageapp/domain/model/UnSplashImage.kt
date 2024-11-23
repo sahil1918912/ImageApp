@@ -7,9 +7,9 @@ data class UnSplashImage (
     val imageUrlRow: String,
     val photographerName: String,
     val photographerUserName: String,
-    val photographerProfileImageUrl: String,
-    val photographerProfileImageLink: String,
+    val photographerProfileImgUrl: String,
+    val photographerProfileLink: String,
     val width: Int,
     val height: Int,
-    val description: String
+    val description: String?
 )

@@ -11,8 +11,8 @@ fun UnsplashImageDto.toDomainModel(): UnSplashImage {
         imageUrlRow = this.urls.raw,
         photographerName = this.user.name,
         photographerUserName = this.user.username,
-        photographerProfileImageUrl = this.user.links.photos,
-        photographerProfileImageLink = this.user.links.html,
+        photographerProfileImgUrl = this.user.profileImage.small,
+        photographerProfileLink = this.user.links.html,
         width = this.width,
         height = this.height,
         description = this.description.toString()
