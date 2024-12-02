@@ -7,11 +7,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.sahil.imageapp.presentation.favorites_screen.FavoritesScreen
 import com.sahil.imageapp.presentation.full_image_screen.FullImageScreen
 import com.sahil.imageapp.presentation.full_image_screen.FullImageViewModel
 import com.sahil.imageapp.presentation.home_screen.HomeScreen
 import com.sahil.imageapp.presentation.home_screen.HomeViewModel
+import com.sahil.imageapp.presentation.profile_screen.ProfileScreen
 import com.sahil.imageapp.presentation.search_screen.SearchScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,12 +53,15 @@ fun NavGraphSetup(
             val fullImageViewModel: FullImageViewModel = hiltViewModel()
             FullImageScreen(
                 image = fullImageViewModel.image,
-                onPhotoGraphImgClick = {},
+                onPhotoGraphNameClick = { profileLink ->
+                    navController.navigate(Routes.ProfileScreen(profileLink = profileLink))
+                },
                 onBackClick = { navController.navigateUp() })
         }
 
-        composable<Routes.ProfileScreen> {
-
+        composable<Routes.ProfileScreen> { backStackEntry ->
+            val profileLink = backStackEntry.toRoute<Routes.ProfileScreen>().profileLink
+            ProfileScreen(profileLink = profileLink, onBackClick = { navController.navigateUp() })
         }
     }
 }
