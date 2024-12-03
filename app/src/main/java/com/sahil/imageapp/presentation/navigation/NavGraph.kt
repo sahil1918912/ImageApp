@@ -56,12 +56,19 @@ fun NavGraphSetup(
                 onPhotoGraphNameClick = { profileLink ->
                     navController.navigate(Routes.ProfileScreen(profileLink = profileLink))
                 },
-                onBackClick = { navController.navigateUp() })
+                onBackClick = { navController.navigateUp() },
+                onImageDownloadClick = { url, title ->
+                    fullImageViewModel.downloadImage(url, title)
+                }
+            )
         }
 
         composable<Routes.ProfileScreen> { backStackEntry ->
             val profileLink = backStackEntry.toRoute<Routes.ProfileScreen>().profileLink
-            ProfileScreen(profileLink = profileLink, onBackClick = { navController.navigateUp() })
+            ProfileScreen(
+                profileLink = profileLink,
+                onBackClick = { navController.navigateUp() }
+            )
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.sahil.imageapp.presentation.full_image_screen
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -22,14 +25,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.sahil.imageapp.R
 import com.sahil.imageapp.domain.model.UnSplashImage
+import com.sahil.imageapp.presentation.components.DownloadOptionsBottomSheet
 import com.sahil.imageapp.presentation.components.FullImageViewTopBar
 import com.sahil.imageapp.presentation.components.ImageAppLoadingBar
+import com.sahil.imageapp.presentation.components.ImageDownloadOption
 import com.sahil.imageapp.presentation.util.rememberWindowInsetsController
 import com.sahil.imageapp.presentation.util.toggleStatusBar
 import kotlinx.coroutines.launch
@@ -37,16 +43,20 @@ import kotlin.math.max
 import kotlin.math.min
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun FullImageScreen(
     image: UnSplashImage?,
     onBackClick: () -> Unit,
     onPhotoGraphNameClick: (String) -> Unit,
+    onImageDownloadClick: (String, String?) -> Unit,
 ) {
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var showBars by rememberSaveable { mutableStateOf(false) }
     val windowInsetsController = rememberWindowInsetsController()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var isDownloadBottomSheetOpen by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = Unit) {
         windowInsetsController.toggleStatusBar(show = showBars)
@@ -57,7 +67,26 @@ fun FullImageScreen(
         onBackClick()
     }
 
+    DownloadOptionsBottomSheet(
+        isOpen = isDownloadBottomSheetOpen,
+        sheetState = sheetState,
+        onDismissRequest = { isDownloadBottomSheetOpen = false },
+        onOptionClick = { option ->
+            scope.launch{ sheetState.hide() }.invokeOnCompletion {
+                if (!sheetState.isVisible) isDownloadBottomSheetOpen = false
+            }
+            val url = when(option) {
+                ImageDownloadOption.SMALL -> image?.imageUrlSmall
+                ImageDownloadOption.MEDIUM -> image?.imageUrlRegular
+                ImageDownloadOption.ORIGINAL -> image?.imageUrlRow
+            }
+            url?.let {
+                onImageDownloadClick(it, image?.description?.take(20))
+                Toast.makeText(context,"Downloading...", Toast.LENGTH_SHORT).show()
+            }
+        }
 
+    )
     Box(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -132,7 +161,7 @@ fun FullImageScreen(
             onBackClick = onBackClick,
             isVisible = showBars,
             onPhotoGraphNameClick = onPhotoGraphNameClick,
-            onDownloadImgClick = {}
+            onDownloadImgClick = { isDownloadBottomSheetOpen = true}
         )
 
     }
