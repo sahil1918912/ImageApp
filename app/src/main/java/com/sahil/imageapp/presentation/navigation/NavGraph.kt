@@ -1,6 +1,7 @@
 package com.sahil.imageapp.presentation.navigation
 
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -21,7 +22,7 @@ import com.sahil.imageapp.presentation.search_screen.SearchScreen
 fun NavGraphSetup(
     navController: NavHostController,
     scrollBehavior: TopAppBarScrollBehavior,
-
+    snackbarHostState: SnackbarHostState
 
     ) {
     NavHost(
@@ -29,10 +30,11 @@ fun NavGraphSetup(
         startDestination = Routes.HomeScreen
     ) {
         composable<Routes.HomeScreen> {
-            val viewModel: HomeViewModel = hiltViewModel()
-            HomeScreen(
+            val homeViewModel: HomeViewModel = hiltViewModel()
+            HomeScreen(  snackbarHostState = snackbarHostState,
+                snackbarEvent = homeViewModel.snackbarEvent,
                 scrollBehavior = scrollBehavior,
-                images = viewModel.images,
+                images = homeViewModel.images,
                 onImageClick = { imageId ->
                     navController.navigate(Routes.FullImageScreen(imageId = imageId))
                 },
@@ -52,6 +54,8 @@ fun NavGraphSetup(
         composable<Routes.FullImageScreen> {
             val fullImageViewModel: FullImageViewModel = hiltViewModel()
             FullImageScreen(
+                snackbarHostState = snackbarHostState,
+                snackbarEvent = fullImageViewModel.snackbarEvent,
                 image = fullImageViewModel.image,
                 onPhotoGraphNameClick = { profileLink ->
                     navController.navigate(Routes.ProfileScreen(profileLink = profileLink))

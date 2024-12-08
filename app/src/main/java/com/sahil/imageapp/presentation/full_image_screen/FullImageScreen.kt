@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
@@ -36,8 +37,10 @@ import com.sahil.imageapp.presentation.components.DownloadOptionsBottomSheet
 import com.sahil.imageapp.presentation.components.FullImageViewTopBar
 import com.sahil.imageapp.presentation.components.ImageAppLoadingBar
 import com.sahil.imageapp.presentation.components.ImageDownloadOption
+import com.sahil.imageapp.presentation.util.SnackbarEvent
 import com.sahil.imageapp.presentation.util.rememberWindowInsetsController
 import com.sahil.imageapp.presentation.util.toggleStatusBar
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.min
@@ -46,6 +49,8 @@ import kotlin.math.min
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun FullImageScreen(
+    snackbarHostState : SnackbarHostState,
+    snackbarEvent : Flow<SnackbarEvent>,
     image: UnSplashImage?,
     onBackClick: () -> Unit,
     onPhotoGraphNameClick: (String) -> Unit,
@@ -57,6 +62,15 @@ fun FullImageScreen(
     val windowInsetsController = rememberWindowInsetsController()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isDownloadBottomSheetOpen by remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = Unit) {
+        snackbarEvent.collect {event ->
+            snackbarHostState.showSnackbar(
+                message = event.message,
+                duration = event.duration
+            )
+        }
+    }
 
     LaunchedEffect(key1 = Unit) {
         windowInsetsController.toggleStatusBar(show = showBars)
